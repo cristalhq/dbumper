@@ -143,9 +143,9 @@ func loadMigrations(path string) ([]string, error) {
 
 		switch id := int(n); {
 		case id < len(paths)+1:
-			return nil, fmt.Errorf("Duplicate migration %d", n)
+			return nil, fmt.Errorf("duplicate migration %d", id)
 		case len(paths)+1 < id:
-			return nil, fmt.Errorf("Missing migration %d", len(paths)+1)
+			return nil, fmt.Errorf("missing migration %d", len(paths)+1)
 		default:
 			paths = append(paths, filepath.Join(path, fi.Name()))
 		}
