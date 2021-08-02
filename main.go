@@ -40,9 +40,10 @@ type Config struct {
 func loadConfig(args []string) (*Config, error) {
 	var cfg Config
 	loader := aconfig.LoaderFor(&cfg, aconfig.Config{
-		SkipFiles: true,
-		EnvPrefix: "dbumper",
-		Args:      args,
+		SkipFiles:       true,
+		EnvPrefix:       "dbumper",
+		AllowDuplicates: true,
+		Args:            args,
 	})
 	if err := loader.Load(); err != nil {
 		return nil, err
