@@ -47,13 +47,13 @@ func (efs *EmbedLoader) Load() ([]*Migration, error) {
 
 		id := int(n)
 		switch {
-		case id < len(files)+1:
+		case id < len(migs)+1:
 			return nil, fmt.Errorf("duplicate migration %d", id)
-		case len(files)+1 < id:
+		case len(migs)+1 < id:
 			return nil, fmt.Errorf("missing migration %d", len(files)+1)
 		}
 
-		body, err := os.ReadFile(efs.path + fi.Name())
+		body, err := os.ReadFile(efs.path + "/" + fi.Name())
 		if err != nil {
 			return nil, err
 		}
