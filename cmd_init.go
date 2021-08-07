@@ -6,14 +6,14 @@ import (
 	"os"
 )
 
-type ConfigInit struct {
+type configInit struct {
 	Path         string `default:"./migrations"`
 	VersionTable string `default:"_dbumper_version"`
 	RemoveOld    bool   `default:"false"`
 }
 
 func initFolderCmd(_ context.Context) error {
-	var cfg ConfigInit
+	var cfg configInit
 	if err := loadConfig(&cfg); err != nil {
 		return err
 	}

@@ -7,13 +7,13 @@ import (
 	"github.com/cristalhq/dbumper/dbump"
 )
 
-type ConfigRun struct {
+type configRun struct {
 	Path string `default:"./migrations"`
 	DB   string `default:"UNKNOWN"`
 }
 
 func runCmd(ctx context.Context) error {
-	var cfg *ConfigRun
+	var cfg configRun
 
 	// TODO: init *sql.DB
 	var migrator dbump.Migrator

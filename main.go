@@ -43,9 +43,9 @@ func runMain(ctx context.Context, args []string) error {
 }
 
 type _ struct {
-	ConfigInit
-	ConfigNew
-	ConfigRun
+	configInit
+	configNew
+	configRun
 }
 
 var acfg = aconfig.Config{

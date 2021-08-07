@@ -8,11 +8,13 @@ import (
 	"strings"
 )
 
+// EmbedLoader can load migrations from embed.FS.
 type EmbedLoader struct {
 	fs   embed.FS
 	path string
 }
 
+// NewEmbedLoader instantiates a new EmbedLoader.
 func NewEmbedLoader(fs embed.FS, path string) *EmbedLoader {
 	return &EmbedLoader{
 		fs:   fs,
@@ -20,6 +22,7 @@ func NewEmbedLoader(fs embed.FS, path string) *EmbedLoader {
 	}
 }
 
+// Load is a method for Loader interface.
 func (efs *EmbedLoader) Load() ([]*Migration, error) {
 	files, err := efs.fs.ReadDir(efs.path)
 	if err != nil {

@@ -8,6 +8,9 @@ import (
 // MigrationDelimiter separates apply and rollback queries inside a migration step/file.
 const MigrationDelimiter = `--- apply above / rollback below ---`
 
+// to prevent multiple migrations running at the same time
+const lockNum int64 = 777_777_777
+
 // Migrator represents DB over which we will run migration queries.
 type Migrator interface {
 	Lock(ctx context.Context) error

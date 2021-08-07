@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-type ConfigNew struct {
+type configNew struct {
 	Path string `default:"./migrations"`
 	Name string `default:"NONAME"`
 }
@@ -24,7 +24,7 @@ var newMigrationText = `--- [Type name of the migration here]
 `
 
 func newMigrationCmd(_ context.Context) error {
-	var cfg ConfigNew
+	var cfg configNew
 	if err := loadConfig(&cfg); err != nil {
 		return err
 	}

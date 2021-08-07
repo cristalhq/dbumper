@@ -11,16 +11,19 @@ import (
 
 var migrationRE = regexp.MustCompile(`^(\d+)_.+\.sql$`)
 
+// DiskLoader can load migrations from disk/OS.
 type DiskLoader struct {
 	path string
 }
 
+// NewDiskLoader instantiates a new DiskLoader.
 func NewDiskLoader(path string) *DiskLoader {
 	return &DiskLoader{
 		path: strings.TrimRight(path, string(filepath.Separator)),
 	}
 }
 
+// Load is a method for Loader interface.
 func (fs *DiskLoader) Load() ([]*Migration, error) {
 	files, err := os.ReadDir(fs.path)
 	if err != nil {
