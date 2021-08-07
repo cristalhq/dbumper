@@ -13,6 +13,10 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/cristalhq/dbumper/dbump"
+	"github.com/cristalhq/dbumper/dbumpmysql"
+	"github.com/cristalhq/dbumper/dbumppg"
+
 	"github.com/cristalhq/aconfig"
 )
 
@@ -34,6 +38,10 @@ type Config struct {
 	New struct {
 		Path string `default:"./migrations"`
 		Name string `default:"NONAME"`
+	} `flag:"-"`
+	Run struct {
+		Path string `default:"./migrations"`
+		DB   string `default:"UNKNOWN"`
 	} `flag:"-"`
 }
 
@@ -67,7 +75,7 @@ func runMain(ctx context.Context, args []string) error {
 	case "new":
 		return newMigrationCmd(ctx, cfg)
 	case "run":
-		panic("unimplemented")
+		return runCmd(ctx, cfg)
 	case "snapshot":
 		panic("unimplemented")
 	case "help":
@@ -160,6 +168,20 @@ var newMigrationText = `--- [Type name of the migration here]
 --- apply above / rollback below ---
 
 `
+
+func runCmd(ctx context.Context, cfg *Config) error {
+	var migrator dbump.Migrator
+	switch cfg.Run.DB {
+	case "postgres":
+		migrator = dbumppg.NewMigrator(nil)
+	case "mysql":
+		migrator = dbumpmysql.NewMigrator(nil)
+	default:
+		return fmt.Errorf("unsupported DB: %s", cfg.Run.DB)
+	}
+
+	return dbump.Run(ctx, migrator, dbump.NewRealFS(cfg.Run.Path))
+}
 
 // appContext returns context that will be cancelled on specific OS signals.
 func appContext() (context.Context, context.CancelFunc) {
