@@ -1,4 +1,4 @@
 github.com/cristalhq/aconfig v0.16.2 h1:cN+y3rtHyK9ar7NRiY4E+USs07P2qnZnGeZfNzXoV2g=
 github.com/cristalhq/aconfig v0.16.2/go.mod h1:NXaRp+1e6bkO4dJn+wZ71xyaihMDYPtCSvEhMTm/H3E=
-github.com/cristalhq/dbumper/dbump v0.0.0-20210807123540-7af4d04a6592 h1:Qk70r8HRC4W6d3gr/7Y9WFRYdjhKKKp02oyFdJ2qaqs=
-github.com/cristalhq/dbumper/dbump v0.0.0-20210807123540-7af4d04a6592/go.mod h1:sAxu10FH/gBvGQKvmhaQOgUVgVJeIoWXb9dRakEEoKs=
+github.com/cristalhq/dbumper/dbump v0.0.3 h1:xkJujY4Y1PaWsA1m3wlN3RHXw0euh3hcvuzmNU1LCjU=
+github.com/cristalhq/dbumper/dbump v0.0.3/go.mod h1:sAxu10FH/gBvGQKvmhaQOgUVgVJeIoWXb9dRakEEoKs=
