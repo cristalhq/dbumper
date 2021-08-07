@@ -3,16 +3,12 @@ package dbump
 import (
 	"context"
 	"fmt"
-	"os"
-	"regexp"
-	"strconv"
-	"strings"
 )
 
-// MigrationDelimiter ...
+// MigrationDelimiter separates apply and rollback queries inside a migration step/file.
 const MigrationDelimiter = `--- apply above / rollback below ---`
 
-// Migrator ...
+// Migrator represents DB over which we will run migration queries.
 type Migrator interface {
 	Lock(ctx context.Context) error
 	Unlock(ctx context.Context) error
@@ -23,23 +19,22 @@ type Migrator interface {
 	Exec(ctx context.Context, query string, args ...interface{}) error
 }
 
-// FS ...
-type FS interface {
-	ReadDir() ([]os.FileInfo, error)
-	ReadFile(filename string) ([]byte, error)
+// Loader returns migrations to be applied on a DB.
+type Loader interface {
+	Load() ([]*Migration, error)
 }
 
-// Migration ...
+// Migration represents migration step that will be runned on DB.
 type Migration struct {
-	ID       int
-	File     string
-	Apply    string
-	Rollback string
+	ID       int    // ID of the migration, unique, positive, starts from 1.
+	Name     string // Name of the migration
+	Apply    string // Apply query
+	Rollback string // Rollback query
 }
 
-// Run ...
-func Run(ctx context.Context, m Migrator, fs FS) error {
-	migs, err := loadMigrations(fs)
+// Run the Migrator with migration queries provided by the Loader.
+func Run(ctx context.Context, m Migrator, l Loader) error {
+	migs, err := l.Load()
 	if err != nil {
 		return err
 	}
@@ -77,29 +72,20 @@ func runLockedMigration(ctx context.Context, m Migrator, migs []*Migration) erro
 		return fmt.Errorf("target version %d is outside of range 0..%d ", targetVersion, len(migs))
 	}
 
-	var direction int
-	if currentVersion < targetVersion {
-		direction = 1
-	} else {
+	direction := 1
+	if currentVersion > targetVersion {
 		direction = -1
 	}
 
 	for currentVersion != targetVersion {
-		var current *Migration
-		var sequence int
-		var query string
+		current := migs[currentVersion]
+		sequence := current.ID
+		query := current.Apply
 
-		if direction == 1 {
-			current = migs[currentVersion]
-			sequence = current.ID
-			query = current.Apply
-		} else {
+		if direction == -1 {
 			current = migs[currentVersion-1]
 			sequence = current.ID - 1
 			query = current.Rollback
-			if current.Rollback == "" {
-				return fmt.Errorf("no rollback downgrade of %d", sequence)
-			}
 		}
 
 		if err := m.Exec(ctx, query); err != nil {
@@ -109,71 +95,7 @@ func runLockedMigration(ctx context.Context, m Migrator, migs []*Migration) erro
 		if err := m.SetVersion(ctx, sequence); err != nil {
 			return err
 		}
-		currentVersion = currentVersion + direction
+		currentVersion += direction
 	}
 	return nil
-}
-
-var migrationRE = regexp.MustCompile(`^(\d+)_.+\.sql$`)
-
-func loadMigrations(fs FS) ([]*Migration, error) {
-	files, err := fs.ReadDir()
-	if err != nil {
-		return nil, err
-	}
-
-	migs := make([]*Migration, 0, len(files))
-	for _, fi := range files {
-		if fi.IsDir() {
-			continue
-		}
-
-		matches := migrationRE.FindStringSubmatch(fi.Name())
-		if len(matches) != 2 {
-			continue
-		}
-
-		n, err := strconv.ParseInt(matches[1], 10, 32)
-		if err != nil {
-			return nil, err
-		}
-
-		id := int(n)
-		switch {
-		case id < len(files)+1:
-			return nil, fmt.Errorf("duplicate migration %d", id)
-		case len(files)+1 < id:
-			return nil, fmt.Errorf("missing migration %d", len(files)+1)
-		}
-
-		mig, err := loadMigration(fs, fi.Name())
-		if err != nil {
-			return nil, err
-		}
-
-		mig.ID = id
-		migs = append(migs, mig)
-	}
-	return migs, nil
-}
-
-func loadMigration(fs FS, filename string) (*Migration, error) {
-	body, err := fs.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	parts := strings.SplitN(string(body), MigrationDelimiter, 2)
-	applySQL := strings.TrimSpace(parts[0])
-
-	var rollbackSQL string
-	if len(parts) == 2 {
-		rollbackSQL = strings.TrimSpace(parts[1])
-	}
-
-	return &Migration{
-		File:     filename,
-		Apply:    applySQL,
-		Rollback: rollbackSQL,
-	}, nil
 }
