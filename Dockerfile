@@ -1,7 +1,9 @@
 FROM golang:1.16.6-alpine3.13 AS build_go
 
 WORKDIR /app
-COPY main.go main.go
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o dbumper.exec .
 
