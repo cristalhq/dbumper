@@ -48,13 +48,13 @@ func (fs *DiskLoader) Load() ([]*Migration, error) {
 
 		id := int(n)
 		switch {
-		case id < len(files)+1:
+		case id < len(migs)+1:
 			return nil, fmt.Errorf("duplicate migration %d", id)
-		case len(files)+1 < id:
-			return nil, fmt.Errorf("missing migration %d", len(files)+1)
+		case len(migs)+1 < id:
+			return nil, fmt.Errorf("missing migration %d", len(migs)+1)
 		}
 
-		body, err := os.ReadFile(fs.path + fi.Name())
+		body, err := os.ReadFile(fs.path + "/" + fi.Name())
 		if err != nil {
 			return nil, err
 		}
