@@ -19,7 +19,7 @@ type DiskLoader struct {
 // NewDiskLoader instantiates a new DiskLoader.
 func NewDiskLoader(path string) *DiskLoader {
 	return &DiskLoader{
-		path: strings.TrimRight(path, string(filepath.Separator)),
+		path: strings.TrimRight(path, string(os.PathSeparator)),
 	}
 }
 
@@ -54,7 +54,7 @@ func (fs *DiskLoader) Load() ([]*Migration, error) {
 			return nil, fmt.Errorf("missing migration %d", len(migs)+1)
 		}
 
-		body, err := os.ReadFile(fs.path + "/" + fi.Name())
+		body, err := os.ReadFile(filepath.Join(fs.path, fi.Name()))
 		if err != nil {
 			return nil, err
 		}

@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -18,7 +19,7 @@ type EmbedLoader struct {
 func NewEmbedLoader(fs embed.FS, path string) *EmbedLoader {
 	return &EmbedLoader{
 		fs:   fs,
-		path: path,
+		path: strings.TrimRight(path, string(os.PathSeparator)),
 	}
 }
 
@@ -53,7 +54,7 @@ func (efs *EmbedLoader) Load() ([]*Migration, error) {
 			return nil, fmt.Errorf("missing migration %d", len(files)+1)
 		}
 
-		body, err := os.ReadFile(efs.path + "/" + fi.Name())
+		body, err := os.ReadFile(filepath.Join(efs.path, fi.Name()))
 		if err != nil {
 			return nil, err
 		}
