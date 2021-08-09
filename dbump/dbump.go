@@ -3,6 +3,7 @@ package dbump
 import (
 	"context"
 	"fmt"
+	"sort"
 )
 
 // MigrationDelimiter separates apply and rollback queries inside a migration step/file.
@@ -37,14 +38,36 @@ type Migration struct {
 
 // Run the Migrator with migration queries provided by the Loader.
 func Run(ctx context.Context, m Migrator, l Loader) error {
-	migs, err := l.Load()
+	ms, err := loadMigrations(l.Load())
 	if err != nil {
 		return err
 	}
-	return runMigration(ctx, m, migs)
+	return runMigration(ctx, m, ms)
 }
 
-func runMigration(ctx context.Context, m Migrator, migs []*Migration) error {
+func loadMigrations(ms []*Migration, err error) ([]*Migration, error) {
+	if err != nil {
+		return nil, err
+	}
+
+	sort.SliceStable(ms, func(i, j int) bool {
+		return ms[i].ID < ms[j].ID
+	})
+
+	for i, m := range ms {
+		switch want := i + 1; {
+		case m.ID < want:
+			return nil, fmt.Errorf("duplicate migration number: %d (%s)", m.ID, m.Name)
+		case m.ID > want:
+			return nil, fmt.Errorf("missing migration number: %d (have %d)", want, m.ID)
+		default:
+			// pass
+		}
+	}
+	return ms, nil
+}
+
+func runMigration(ctx context.Context, m Migrator, ms []*Migration) error {
 	if err := m.Lock(ctx); err != nil {
 		return err
 	}
@@ -56,23 +79,23 @@ func runMigration(ctx context.Context, m Migrator, migs []*Migration) error {
 		}
 	}()
 
-	err = runLockedMigration(ctx, m, migs)
+	err = runLockedMigration(ctx, m, ms)
 	return err
 }
 
-func runLockedMigration(ctx context.Context, m Migrator, migs []*Migration) error {
+func runLockedMigration(ctx context.Context, m Migrator, ms []*Migration) error {
 	currentVersion, err := m.Version(ctx)
 	if err != nil {
 		return err
 	}
 
 	// TODO: configure
-	targetVersion := len(migs)
+	targetVersion := len(ms)
 	switch {
-	case targetVersion < 0 || len(migs) < targetVersion:
+	case targetVersion < 0 || len(ms) < targetVersion:
 		fallthrough
-	case currentVersion < 0 || len(migs) < currentVersion:
-		return fmt.Errorf("target version %d is outside of range 0..%d ", targetVersion, len(migs))
+	case currentVersion < 0 || len(ms) < currentVersion:
+		return fmt.Errorf("target version %d is outside of range 0..%d ", targetVersion, len(ms))
 	}
 
 	direction := 1
@@ -81,12 +104,12 @@ func runLockedMigration(ctx context.Context, m Migrator, migs []*Migration) erro
 	}
 
 	for currentVersion != targetVersion {
-		current := migs[currentVersion]
+		current := ms[currentVersion]
 		sequence := current.ID
 		query := current.Apply
 
 		if direction == -1 {
-			current = migs[currentVersion-1]
+			current = ms[currentVersion-1]
 			sequence = current.ID - 1
 			query = current.Rollback
 		}
