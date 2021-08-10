@@ -35,6 +35,8 @@ func runMain(ctx context.Context, args []string) error {
 		return runCmd(ctx)
 	case "snapshot":
 		panic("unimplemented")
+	case "version":
+		return runVersion(ctx)
 	case "help":
 		panic("unimplemented")
 	default:
