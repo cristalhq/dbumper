@@ -13,9 +13,6 @@ func TestDiskLoader(t *testing.T) {
 	}
 
 	want := testdataMigrations
-	if len(migs) == 0 {
-		t.Fatal("expected non-empty")
-	}
 
 	if len(migs) != len(want) {
 		t.Fatalf("got %+v\nwant %+v", len(migs), len(want))
@@ -27,6 +24,7 @@ func TestDiskLoader(t *testing.T) {
 		}
 	}
 }
+
 func TestDiskLoaderSubdir(t *testing.T) {
 	loader := NewDiskLoader("./testdata/subdir")
 	migs, err := loader.Load()
@@ -35,9 +33,6 @@ func TestDiskLoaderSubdir(t *testing.T) {
 	}
 
 	want := testdataMigrations
-	if len(migs) == 0 {
-		t.Fatal("expected non-empty")
-	}
 
 	if len(migs) != len(want) {
 		t.Fatalf("got %+v\nwant %+v", len(migs), len(want))

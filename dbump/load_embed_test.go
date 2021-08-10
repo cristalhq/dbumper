@@ -17,9 +17,6 @@ func TestEmbedLoader(t *testing.T) {
 	}
 
 	want := testdataMigrations
-	if len(migs) == 0 {
-		t.Fatal("expected non-empty")
-	}
 
 	if len(migs) != len(want) {
 		t.Fatalf("got %+v\nwant %+v", len(migs), len(want))
@@ -31,6 +28,7 @@ func TestEmbedLoader(t *testing.T) {
 		}
 	}
 }
+
 func TestEmbedLoaderSubdir(t *testing.T) {
 	loader := NewEmbedLoader(testdata, "testdata/subdir")
 	migs, err := loader.Load()
@@ -39,9 +37,6 @@ func TestEmbedLoaderSubdir(t *testing.T) {
 	}
 
 	want := testdataMigrations
-	if len(migs) == 0 {
-		t.Fatal("expected non-empty")
-	}
 
 	if len(migs) != len(want) {
 		t.Fatalf("got %+v\nwant %+v", len(migs), len(want))
