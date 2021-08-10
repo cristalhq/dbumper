@@ -64,16 +64,19 @@ func TestLoadMigrations(t *testing.T) {
 var testdataMigrations = []*Migration{
 	&Migration{
 		ID:       1,
+		Name:     `0001_init.sql`,
 		Apply:    `SELECT 1;`,
 		Rollback: `SELECT 10;`,
 	},
 	&Migration{
 		ID:       2,
+		Name:     `0002_another.sql`,
 		Apply:    `SELECT 2;`,
 		Rollback: `SELECT 20;`,
 	},
 	&Migration{
 		ID:       3,
+		Name:     `0003_even-better.sql`,
 		Apply:    `SELECT 3;`,
 		Rollback: `SELECT 30;`,
 	},
