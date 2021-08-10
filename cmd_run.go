@@ -24,32 +24,37 @@ func runCmd(ctx context.Context) error {
 		return err
 	}
 
-	var migrator dbump.Migrator
+	migrator, err := getMigrator(cfg)
+	if err != nil {
+		return err
+	}
+	return dbump.Run(ctx, migrator, dbump.NewDiskLoader(cfg.Path))
+}
+
+func getMigrator(cfg configRun) (dbump.Migrator, error) {
 	switch cfg.DB {
 	case "clickhouse":
 		db, err := sql.Open("clickhouse", cfg.DSN)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		migrator = dbump.NewMigratorClickHouse(db)
+		return dbump.NewMigratorClickHouse(db), nil
 
 	case "mysql":
 		db, err := sql.Open("mysql", cfg.DSN)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		migrator = dbump.NewMigratorMySQL(db)
+		return dbump.NewMigratorMySQL(db), nil
 
 	case "postgres":
 		db, err := sql.Open("pgx", cfg.DSN)
 		if err != nil {
-			return err
+			return nil, err
 		}
-		migrator = dbump.NewMigratorPostgres(db)
+		return dbump.NewMigratorPostgres(db), nil
 
 	default:
-		return fmt.Errorf("unsupported DB: %s", cfg.DB)
+		return nil, fmt.Errorf("unsupported DB: %s", cfg.DB)
 	}
-
-	return dbump.Run(ctx, migrator, dbump.NewDiskLoader(cfg.Path))
 }
