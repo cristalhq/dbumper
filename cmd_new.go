@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cristalhq/dbumper/dbump"
+	"github.com/cristalhq/dbump"
 )
 
 type configNew struct {

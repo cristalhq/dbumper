@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/cristalhq/dbumper/dbump"
+	"github.com/cristalhq/dbump"
 
 	_ "github.com/ClickHouse/clickhouse-go" // import ClickHouse
 	_ "github.com/go-sql-driver/mysql"      // import MySQL
