@@ -26,11 +26,8 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Test dbumper
+    - name: Test
       run: go test -v -coverprofile=coverage.txt ./...
-
-    - name: Test dbump
-      run: cd dbump && go test -v ./...
 
     - name: Upload Coverage
       uses: codecov/codecov-action@v1
