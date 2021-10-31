@@ -18,7 +18,7 @@ type configRun struct {
 	DSN  string `default:"UNKNOWN"`
 }
 
-func runCmd(ctx context.Context) error {
+func runCmd(ctx context.Context, _ []string) error {
 	var cfg configRun
 	if err := loadConfig(&cfg); err != nil {
 		return err

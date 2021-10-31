@@ -1,53 +1,42 @@
 package main
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"log"
 	"os"
-	"os/signal"
-	"syscall"
 
+	"github.com/cristalhq/acmd"
 	"github.com/cristalhq/aconfig"
 )
 
-func main() {
-	ctx, cancel := appContext()
-	defer cancel()
+const version = "v0.0.0"
 
-	if err := runMain(ctx, os.Args[1:]); err != nil {
+func main() {
+	r := acmd.RunnerOf(cmds, acmd.Config{
+		Version: version,
+	})
+
+	if err := r.Run(); err != nil {
 		log.Fatal(fmt.Errorf("dbumper: %w", err))
 	}
 }
 
-func runMain(ctx context.Context, args []string) error {
-	if len(args) < 1 {
-		return errors.New("no command provided (init, new, run, snapshot, help)")
-	}
-
-	switch cmd := args[0]; cmd {
-	case "init":
-		return initFolderCmd(ctx)
-	case "new":
-		return newMigrationCmd(ctx)
-	case "run":
-		return runCmd(ctx)
-	case "snapshot":
-		panic("unimplemented")
-	case "version":
-		return runVersion(ctx)
-	case "help":
-		panic("unimplemented")
-	default:
-		return fmt.Errorf("unknown command %q", cmd)
-	}
-}
-
-type _ struct {
-	configInit
-	configNew
-	configRun
+var cmds = []acmd.Command{
+	{
+		Name:        "init",
+		Description: "initialize migration folder",
+		Do:          initFolderCmd,
+	},
+	{
+		Name:        "new",
+		Description: "create a new empty migration",
+		Do:          newMigrationCmd,
+	},
+	{
+		Name:        "run",
+		Description: "run migrations on database",
+		Do:          runCmd,
+	},
 }
 
 var acfg = aconfig.Config{
@@ -64,12 +53,4 @@ func loadConfig(cfg interface{}) error {
 		return fmt.Errorf("cannot load config: %w", err)
 	}
 	return nil
-}
-
-// appContext returns context that will be cancelled on specific OS signals.
-func appContext() (context.Context, context.CancelFunc) {
-	signals := []os.Signal{syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP}
-
-	ctx, cancel := signal.NotifyContext(context.Background(), signals...)
-	return ctx, cancel
 }

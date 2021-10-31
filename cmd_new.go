@@ -20,7 +20,7 @@ var newMigrationText = `` +
 	dbump.MigrationDelimiter +
 	"\n"
 
-func newMigrationCmd(_ context.Context) error {
+func newMigrationCmd(_ context.Context, _ []string) error {
 	var cfg configNew
 	if err := loadConfig(&cfg); err != nil {
 		return err

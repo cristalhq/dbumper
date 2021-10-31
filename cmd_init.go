@@ -12,7 +12,7 @@ type configInit struct {
 	RemoveOld    bool   `default:"false"`
 }
 
-func initFolderCmd(_ context.Context) error {
+func initFolderCmd(_ context.Context, _ []string) error {
 	var cfg configInit
 	if err := loadConfig(&cfg); err != nil {
 		return err
