@@ -3,7 +3,7 @@ module github.com/cristalhq/dbumper
 go 1.16
 
 require (
-	github.com/ClickHouse/clickhouse-go v1.4.5
+	github.com/ClickHouse/clickhouse-go v1.5.4
 	github.com/cristalhq/acmd v0.1.5
 	github.com/cristalhq/aconfig v0.17.0
 	github.com/cristalhq/dbump v0.1.1
