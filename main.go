@@ -9,11 +9,11 @@ import (
 	"github.com/cristalhq/aconfig"
 )
 
-const version = "v0.0.0"
+var Version = "v0.0.0"
 
 func main() {
 	r := acmd.RunnerOf(cmds, acmd.Config{
-		Version: version,
+		Version: Version,
 	})
 
 	if err := r.Run(); err != nil {
@@ -41,7 +41,7 @@ var cmds = []acmd.Command{
 
 var acfg = aconfig.Config{
 	SkipFiles:       true,
-	EnvPrefix:       "dbumper",
+	EnvPrefix:       "DBUMPER",
 	AllowDuplicates: true,
 	Args:            os.Args[2:], // Hack to not propagate os.Args to all commands
 }
