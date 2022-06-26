@@ -2,15 +2,15 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/cristalhq/dbump"
-	"github.com/cristalhq/dbump/dbump_pg"
+	"github.com/cristalhq/dbump/dbump_pgx"
 
 	_ "github.com/ClickHouse/clickhouse-go" // import ClickHouse
 	_ "github.com/go-sql-driver/mysql"      // import MySQL
-	_ "github.com/jackc/pgx/v4/stdlib"      // import Postgres (pgx-stdlib)
+	"github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib" // import Postgres (pgx-stdlib)
 )
 
 type configRun struct {
@@ -26,7 +26,7 @@ func runCmd(ctx context.Context, _ []string) error {
 		return err
 	}
 
-	migrator, err := getMigrator(cfg)
+	migrator, err := getMigrator(ctx, cfg)
 	if err != nil {
 		return err
 	}
@@ -39,14 +39,14 @@ func runCmd(ctx context.Context, _ []string) error {
 	return dbump.Run(ctx, config)
 }
 
-func getMigrator(cfg configRun) (dbump.Migrator, error) {
+func getMigrator(ctx context.Context, cfg configRun) (dbump.Migrator, error) {
 	switch cfg.DB {
 	case "postgres":
-		db, err := sql.Open("pgx", cfg.DSN)
+		conn, err := pgx.Connect(ctx, cfg.DSN)
 		if err != nil {
 			return nil, err
 		}
-		return dbump_pg.NewMigrator(db), nil
+		return dbump_pgx.NewMigrator(conn, dbump_pgx.Config{}), nil
 
 	default:
 		return nil, fmt.Errorf("unsupported database: %s", cfg.DB)
