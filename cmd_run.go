@@ -35,6 +35,7 @@ func runCmd(ctx context.Context, _ []string) error {
 		Migrator: migrator,
 		Loader:   dbump.NewDiskLoader(cfg.Path),
 		Mode:     parseMode(cfg.Mode),
+		Num:      1,
 	}
 	return dbump.Run(ctx, config)
 }
@@ -55,14 +56,14 @@ func getMigrator(ctx context.Context, cfg configRun) (dbump.Migrator, error) {
 
 func parseMode(mode string) dbump.MigratorMode {
 	switch mode {
-	case "Up":
-		return dbump.ModeUp
-	case "Down":
-		return dbump.ModeDown
-	case "UpOne":
-		return dbump.ModeUpOne
-	case "DownOne":
-		return dbump.ModeDownOne
+	case "up":
+		return dbump.ModeApplyAll
+	case "down":
+		return dbump.ModeRevertAll
+	case "up1":
+		return dbump.ModeApplyN
+	case "down1":
+		return dbump.ModeRevertN
 	default:
 		return dbump.ModeNotSet
 
