@@ -7,7 +7,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o dbumper.exec .
 
-FROM alpine:3.12.4
+FROM alpine:3.16.2
 
 COPY --from=build_go /app/dbumper.exec dbumper.exec
 EXPOSE 8000
