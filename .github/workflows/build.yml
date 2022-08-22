@@ -31,3 +31,11 @@ jobs:
       contents: write
     with:
       tag: ${{ github.event.input.tag }}
+
+    # - name: Run Goreleaser
+    #   uses: goreleaser/goreleaser-action@v2
+    #   with:
+    #     version: latest
+    #     args: release --rm-dist
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN_REPO }}

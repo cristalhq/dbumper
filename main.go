@@ -24,22 +24,22 @@ var cmds = []acmd.Command{
 	{
 		Name:        "init",
 		Description: "initialize migration folder",
-		Do:          cmdInitFolder,
+		ExecFunc:    cmdInitFolder,
 	},
 	{
 		Name:        "new",
 		Description: "create a new empty migration",
-		Do:          cmdNewMigration,
+		ExecFunc:    cmdNewMigration,
 	},
 	{
 		Name:        "status",
 		Description: "show database status",
-		Do:          cmdStatus,
+		ExecFunc:    cmdStatus,
 	},
 	{
 		Name:        "run",
 		Description: "run migrations on database",
-		Do:          cmdRun,
+		ExecFunc:    cmdRun,
 	},
 }
 
