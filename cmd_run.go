@@ -56,13 +56,13 @@ func getMigrator(ctx context.Context, cfg configRun) (dbump.Migrator, error) {
 
 func parseMode(mode string) dbump.MigratorMode {
 	switch mode {
-	case "up":
+	case "apply-all":
 		return dbump.ModeApplyAll
-	case "down":
+	case "revert-all":
 		return dbump.ModeRevertAll
-	case "up1":
+	case "apply-one":
 		return dbump.ModeApplyN
-	case "down1":
+	case "revert-one":
 		return dbump.ModeRevertN
 	default:
 		return dbump.ModeNotSet
