@@ -10,7 +10,6 @@ import (
 	_ "github.com/ClickHouse/clickhouse-go" // import ClickHouse
 	_ "github.com/go-sql-driver/mysql"      // import MySQL
 	"github.com/jackc/pgx/v4"
-	_ "github.com/jackc/pgx/v4/stdlib" // import Postgres (pgx-stdlib)
 )
 
 type configRun struct {
