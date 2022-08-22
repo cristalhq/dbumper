@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/cristalhq/acmd"
 	"github.com/cristalhq/aconfig"
 )
 
-var Version = "v0.0.0"
+var Version = "(devel)"
 
 func main() {
 	r := acmd.RunnerOf(cmds, acmd.Config{
@@ -17,7 +16,7 @@ func main() {
 	})
 
 	if err := r.Run(); err != nil {
-		log.Fatal(fmt.Errorf("dbumper: %w", err))
+		r.Exit(err)
 	}
 }
 
@@ -44,15 +43,13 @@ var cmds = []acmd.Command{
 	},
 }
 
-var acfg = aconfig.Config{
-	SkipFiles:       true,
-	EnvPrefix:       "DBUMPER",
-	AllowDuplicates: true,
-	Args:            os.Args[2:], // Hack to not propagate os.Args to all commands
-}
-
 func loadConfig(cfg interface{}) error {
-	loader := aconfig.LoaderFor(cfg, acfg)
+	loader := aconfig.LoaderFor(cfg, aconfig.Config{
+		SkipFiles:       true,
+		EnvPrefix:       "DBUMPER",
+		AllowDuplicates: true,
+		Args:            os.Args[2:], // Hack to not propagate os.Args to all commands
+	})
 
 	if err := loader.Load(); err != nil {
 		return fmt.Errorf("load config: %w", err)
