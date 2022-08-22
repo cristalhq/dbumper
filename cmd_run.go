@@ -42,7 +42,7 @@ func cmdRun(ctx context.Context, _ []string) error {
 
 func getMigrator(ctx context.Context, cfg configRun) (dbump.Migrator, error) {
 	switch cfg.DB {
-	case "postgres":
+	case "pg", "postgres":
 		conn, err := pgx.Connect(ctx, cfg.DSN)
 		if err != nil {
 			return nil, err
