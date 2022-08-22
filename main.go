@@ -33,6 +33,11 @@ var cmds = []acmd.Command{
 		Do:          cmdNewMigration,
 	},
 	{
+		Name:        "status",
+		Description: "show database status",
+		Do:          cmdStatus,
+	},
+	{
 		Name:        "run",
 		Description: "run migrations on database",
 		Do:          cmdRun,
