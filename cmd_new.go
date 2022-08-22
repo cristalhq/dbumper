@@ -20,7 +20,7 @@ var newMigrationText = `` +
 	dbump.MigrationDelimiter +
 	"\n"
 
-func newMigrationCmd(_ context.Context, _ []string) error {
+func cmdNewMigration(_ context.Context, _ []string) error {
 	var cfg configNew
 	if err := loadConfig(&cfg); err != nil {
 		return err
@@ -29,13 +29,13 @@ func newMigrationCmd(_ context.Context, _ []string) error {
 
 	migrations, err := dbump.NewDiskLoader(path).Load()
 	if err != nil {
-		return fmt.Errorf("cannot load migrations: %w", err)
+		return fmt.Errorf("load migrations: %w", err)
 	}
 
 	name := newMigrationFileName(len(migrations)+1, cfg.Name)
 
 	if err := createNewMigration(path, name); err != nil {
-		return fmt.Errorf("cannot create new migration: %w", err)
+		return fmt.Errorf("create new migration: %w", err)
 	}
 	return nil
 }

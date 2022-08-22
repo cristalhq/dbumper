@@ -25,17 +25,17 @@ var cmds = []acmd.Command{
 	{
 		Name:        "init",
 		Description: "initialize migration folder",
-		Do:          initFolderCmd,
+		Do:          cmdInitFolder,
 	},
 	{
 		Name:        "new",
 		Description: "create a new empty migration",
-		Do:          newMigrationCmd,
+		Do:          cmdNewMigration,
 	},
 	{
 		Name:        "run",
 		Description: "run migrations on database",
-		Do:          runCmd,
+		Do:          cmdRun,
 	},
 }
 
@@ -50,7 +50,7 @@ func loadConfig(cfg interface{}) error {
 	loader := aconfig.LoaderFor(cfg, acfg)
 
 	if err := loader.Load(); err != nil {
-		return fmt.Errorf("cannot load config: %w", err)
+		return fmt.Errorf("load config: %w", err)
 	}
 	return nil
 }

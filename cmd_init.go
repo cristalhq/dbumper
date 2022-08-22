@@ -10,7 +10,7 @@ type configInit struct {
 	Path string `default:"./migrations"`
 }
 
-func initFolderCmd(_ context.Context, _ []string) error {
+func cmdInitFolder(_ context.Context, _ []string) error {
 	var cfg configInit
 	if err := loadConfig(&cfg); err != nil {
 		return err

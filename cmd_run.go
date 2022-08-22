@@ -20,7 +20,7 @@ type configRun struct {
 	Mode string `default:"UNKNOWN"`
 }
 
-func runCmd(ctx context.Context, _ []string) error {
+func cmdRun(ctx context.Context, _ []string) error {
 	var cfg configRun
 	if err := loadConfig(&cfg); err != nil {
 		return err
