@@ -3,7 +3,7 @@ module github.com/cristalhq/dbumper
 go 1.18
 
 require (
-	github.com/cristalhq/dbump v0.12.0
+	github.com/cristalhq/dbump v0.13.0
 	github.com/cristalhq/dbump/dbump_pgx v0.12.0
 )
 
